@@ -27,6 +27,9 @@ include_directories(${MPI_INCLUDE_PATH})
 set(COMPILE_FLAGS  ${COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
 set(LINK_FLAGS ${LINK_FLAGS} ${MPI_LINK_FLAGS})
 
+find_package(Eigen3 3.2 REQUIRED)
+include_directories(${EIGEN3_INCLUDE_DIR})
+
 add_executable(readMesh readMesh.cpp)
 add_executable(aste aste.cpp)
 
