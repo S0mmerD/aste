@@ -10,6 +10,7 @@
 #include <vtkPolyData.h>
 #include <vtkArrayIterator.h>
 #include <vtkArrayIteratorTemplate.h>
+#include <vtkCellIterator.h>
 #include <vtkIndent.h>
 
 int main(int argc, char *argv[]) {
@@ -35,11 +36,15 @@ int main(int argc, char *argv[]) {
             std::cout << tuple[0] << " " << tuple[1] << " " << tuple[2] << std::endl;
         }
     }
-    /*
-    vtkSmartPointer<vtkPolyDataReader> reader =
-        vtkSmartPointer<vtkPolyDataReader>::New();
-    reader->SetFileName (fileName);
-    reader->Update();
-    vtkSmartPointer<vtkPolyData> polyData = reader->GetOutput();
-    */
+    std::cout << "-------------Cells------------------\n";
+    for (auto iterator = polyData->NewCellIterator(); !iterator->IsDoneWithTraversal(); iterator->GoToNextCell()){
+        std::cout << "IDs:\t\tCoords:\n";
+        auto ids = iterator->GetPointIds();
+        auto coords = iterator->GetPoints();
+        for (auto i = 0; i < ids->GetNumberOfIds(); i++){
+            std::cout << "\t" << ids->GetId(i);
+            auto ptr = coords->GetPoint(i);
+            std::cout << "\t" << ptr[0] << " " << ptr[1] << " " << ptr[2] << "\n";
+        }
+    }
 }
