@@ -30,9 +30,17 @@ set(LINK_FLAGS ${LINK_FLAGS} ${MPI_LINK_FLAGS})
 find_package(Eigen3 3.2 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
+find_package(VTK REQUIRED)
+include(${VTK_USE_FILE})
+
 add_executable(readMesh readMesh.cpp)
 add_executable(aste aste.cpp)
+add_executable(readVTK readVTK.cpp)
 
+target_link_libraries(readVTK ${Boost_LIBRARIES})
+target_link_libraries(readVTK ${MPI_LIBRARIES})
+target_link_libraries(readVTK ${precice})
+target_link_libraries(readVTK ${VTK_LIBRARIES})
 
 target_link_libraries(aste ${Boost_LIBRARIES})
 target_link_libraries(aste ${MPI_LIBRARIES})
