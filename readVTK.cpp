@@ -1,4 +1,5 @@
 #include <iostream>
+#include <mpi.h>
 
 #include <vtkSmartPointer.h>
 #include <vtkGenericDataObjectReader.h>
@@ -13,14 +14,31 @@
 #include <vtkCellIterator.h>
 #include <vtkIndent.h>
 
+#include "common.hpp"
+#include "mpiUtils.hpp"
+#include "precice.hpp"
+#include "meshReader.hpp"
+
+using namespace std;
+
 int main(int argc, char *argv[]) {
-    const char* fileName = "example.vtk";
+    auto globalMPI = make_shared<MPIEnv>(argc, argv);
+    auto options = getOptions(argc, argv);
+    //auto precice = makePreciceFromOptions(globalMPI, options);
+    auto meshReader = MeshReader(options["meshFile"].as<string>());
+    meshReader.readMesh();
+    auto mesh = meshReader.mesh();
+    std::cout << "Pointcount: " << mesh->pointCount() << "\n";
+    for (const auto& point : mesh->allPoints())
+        std::cout << point << "\n\n";
+    return 0;
+
+    auto fileName = options["meshFile"].as<string>();
     vtkSmartPointer<vtkDataSetReader> reader =
           vtkSmartPointer<vtkDataSetReader>::New();
-    reader->SetFileName(fileName);
+    reader->SetFileName(fileName.c_str());
     reader->Update();
     reader->GetOutput()->Register(reader);
-    //vtkSmartPointer<vtkDataSet> polyData = reader->GetOutput();
     auto polyData = reader->GetOutput();
     auto pointCount = polyData->GetNumberOfPoints();
     auto pointData = polyData->GetPointData();

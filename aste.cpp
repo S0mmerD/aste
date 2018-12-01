@@ -16,7 +16,7 @@ using std::cout;
 using std::endl;
 
 
-Mesh getMyMesh(OptionMap options, int MPIrank, int MPIsize)
+DistMesh getMyMesh(OptionMap options, int MPIrank, int MPIsize)
 {
   double xSize = options["x"].as<double>();
   double ySize = options["y"].as<double>();
@@ -26,17 +26,17 @@ Mesh getMyMesh(OptionMap options, int MPIrank, int MPIsize)
   double xInc = xSize / nx;
   double yInc = ySize / ny;
 
-  Mesh mesh;
+  DistMesh mesh;
   for (int i=0; i<nx; i++) {
     for (int j=0; j<ny; j++) {
-      Vertex v = { i*xInc, j*yInc};
+      DistVertex v = { i*xInc, j*yInc};
       mesh.push_back(v);
     }
   }
   if (deadrank >= 0) {
     --MPIsize;
     if (MPIrank == deadrank)
-      return Mesh();
+      return DistMesh();
     if (MPIrank > deadrank)
       --MPIrank; // shift all MPIranks
   }
@@ -46,7 +46,7 @@ Mesh getMyMesh(OptionMap options, int MPIrank, int MPIsize)
 
 
 /// Fills a vector with data values
-Data getData(Mesh& mesh)
+Data getData(DistMesh& mesh)
 {
   Data data;
   for (auto &v : mesh) {
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
   int meshID = interface.getMeshID( (participant == "A") ? "MeshA" : "MeshB" );
   int dataID = interface.getDataID("Data", meshID);
 
-  Mesh mesh = getMyMesh(options, MPIrank, MPIsize);
+  DistMesh mesh = getMyMesh(options, MPIrank, MPIsize);
   Data data;
   if (participant == "A")
     data = getData(mesh); // only A has a mesh with values

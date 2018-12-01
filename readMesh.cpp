@@ -9,6 +9,7 @@
 #include "utils/prettyprint.hpp"
 #include "utils/EventTimings.hpp"
 
+#include "common.hpp"
 
 using std::string;
 using std::endl;
@@ -21,7 +22,7 @@ int countLines(std::string file)
   return std::count(std::istreambuf_iterator<char>(inFile),
                     std::istreambuf_iterator<char>(), '\n');
 }
-
+/*
 boost::program_options::variables_map getOptions(int argc, char *argv[])
 {
   namespace po = boost::program_options;
@@ -69,6 +70,7 @@ boost::program_options::variables_map getOptions(int argc, char *argv[])
   }
   return vm;
 }
+*/
 
 int main(int argc, char *argv[])
 {
