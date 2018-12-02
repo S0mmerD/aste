@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 3.1)
 project(ASTE)
 
+list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake-modules")
+
 set (CMAKE_CXX_STANDARD 11)
 
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -33,15 +35,18 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 
+find_package(METIS REQUIRED)
+
 add_executable(readMesh readMesh.cpp)
 add_executable(aste aste.cpp)
-add_executable(readVTK readVTK.cpp meshReader.cpp mesh.cpp)
+add_executable(readVTK readVTK.cpp meshReader.cpp mesh.cpp metisUtils.cpp)
 add_library(common common.cpp)
 
 target_link_libraries(readVTK ${Boost_LIBRARIES})
 target_link_libraries(readVTK ${MPI_LIBRARIES})
 target_link_libraries(readVTK ${precice})
 target_link_libraries(readVTK ${VTK_LIBRARIES})
+target_link_libraries(readVTK ${METIS_LIBRARIES})
 target_link_libraries(readVTK common)
 
 target_link_libraries(aste ${Boost_LIBRARIES})

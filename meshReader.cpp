@@ -15,7 +15,6 @@ MeshReader::MeshReader(string filename) : _filename{filename}
 void MeshReader::readMesh()
 {
     _data = readPolyData();
-    std::cout << "PolyData:" << vtkPolyData::SafeDownCast(_data) << "\n";
     _mesh = make_shared<Mesh>(_data);
     _ready = true;
 }

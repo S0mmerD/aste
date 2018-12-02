@@ -13,11 +13,12 @@ class MeshReader
 
         void readMesh();
         std::shared_ptr<Mesh> mesh();
+
+        vtkSmartPointer<vtkDataSet> _data; //TODO: make this private again ASAP!!
     private:
         vtkSmartPointer<vtkDataSet> readPolyData();
 
         bool _ready = false;
         std::string _filename;
         std::shared_ptr<Mesh> _mesh;
-        vtkSmartPointer<vtkDataSet> _data;
 };

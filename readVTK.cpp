@@ -13,11 +13,15 @@
 #include <vtkArrayIteratorTemplate.h>
 #include <vtkCellIterator.h>
 #include <vtkIndent.h>
+#include <vtkLongLongArray.h>
+#include <vtkDataSetWriter.h>
+#include <utils/prettyprint.hpp>
 
 #include "common.hpp"
 #include "mpiUtils.hpp"
 #include "precice.hpp"
 #include "meshReader.hpp"
+#include "metisUtils.hpp"
 
 using namespace std;
 
@@ -28,11 +32,22 @@ int main(int argc, char *argv[]) {
     auto meshReader = MeshReader(options["meshFile"].as<string>());
     meshReader.readMesh();
     auto mesh = meshReader.mesh();
-    std::cout << "Pointcount: " << mesh->pointCount() << "\n";
-    for (const auto& point : mesh->allPoints())
-        std::cout << point << "\n\n";
-    return 0;
+    auto part = partition(mesh, 2);
 
+    auto colors = vtkSmartPointer<vtkLongLongArray>::New();
+    colors->SetNumberOfComponents(1);
+    colors->SetName("Colors");
+    for (auto i = 0; i < part.size(); i++){
+        double value = part.at(i);
+        colors->InsertNextTuple(&value);
+    }
+    auto polyData = meshReader._data;
+    polyData->GetPointData()->SetScalars(colors);
+    auto writer = vtkSmartPointer<vtkDataSetWriter>::New();
+    writer->SetFileName("output.vtk");
+    writer->SetInputData(polyData);
+    writer->Write();
+/*
     auto fileName = options["meshFile"].as<string>();
     vtkSmartPointer<vtkDataSetReader> reader =
           vtkSmartPointer<vtkDataSetReader>::New();
@@ -65,4 +80,5 @@ int main(int argc, char *argv[]) {
             std::cout << "\t" << ptr[0] << " " << ptr[1] << " " << ptr[2] << "\n";
         }
     }
+    */
 }

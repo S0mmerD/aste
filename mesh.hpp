@@ -72,8 +72,9 @@ class Cell
 {
     public:
         Cell(vtkCell* cell) : _data{cell} {}
+        vtkIdType* data();
         int size() const;
-        int vertex(int i) const;
+        vtkIdType vertex(int i) const;
     private:
         vtkCell* _data;
 };

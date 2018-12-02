@@ -85,12 +85,17 @@ CellIterator CellRange::end() const
     return CellIterator(_data, count);
 }
 
+vtkIdType* Cell::data()
+{
+    return _data->GetPointIds()->GetPointer(0);
+}
+
 int Cell::size() const
 {
     return _data->GetNumberOfPoints();
 }
 
-int Cell::vertex(int i) const
+vtkIdType Cell::vertex(int i) const
 {
     return _data->GetPointId(i);
 }
