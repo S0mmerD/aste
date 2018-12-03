@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     auto meshReader = MeshReader(options["meshFile"].as<string>());
     meshReader.readMesh();
     auto mesh = meshReader.mesh();
-    auto part = partition(mesh, 2);
+    auto part = partition(mesh, 32);
 
     auto colors = vtkSmartPointer<vtkLongLongArray>::New();
     colors->SetNumberOfComponents(1);
