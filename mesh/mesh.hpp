@@ -8,6 +8,9 @@ using namespace std;
 using namespace Eigen;
 using Vertex = Map<Vector3d>;
 
+class MeshWriter;
+class MeshReader;
+
 class PointRange;
 class PointIterator;
 class CellRange;
@@ -19,6 +22,8 @@ class Mesh
     public:
         Mesh() =default;
         Mesh(vtkSmartPointer<vtkDataSet> data);
+
+        vtkSmartPointer<vtkDataSet> data();
 
         Vertex point(int i);
         PointRange allPoints();

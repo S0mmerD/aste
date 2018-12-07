@@ -1,5 +1,7 @@
 #include "metisUtils.hpp"
 
+#include <vtkLongLongArray.h>
+#include <vtkPointData.h>
 #include <utils/prettyprint.hpp>
 
 std::vector<idx_t> partition(std::shared_ptr<Mesh> mesh, idx_t nparts)
@@ -22,16 +24,6 @@ std::vector<idx_t> partition(std::shared_ptr<Mesh> mesh, idx_t nparts)
     idx_t objval;
     idx_t options[METIS_NOPTIONS];
     METIS_SetDefaultOptions(options);
-    options[METIS_OPTION_PTYPE] = METIS_PTYPE_RB;
-    options[METIS_OPTION_CONTIG] = 1;
-    /*options[METIS_OPTION_DBGLVL] = 
-        METIS_DBG_INFO |
-        METIS_DBG_COARSEN |
-        METIS_DBG_REFINE |
-        METIS_DBG_IPART ;*/
-    options[METIS_OPTION_OBJTYPE] = METIS_OBJTYPE_CUT;
-    options[METIS_OPTION_NUMBERING] = 0;
-    //options[METIS_OPTION_CTYPE] = METIS_CTYPE_RM;
     vector<idx_t> point_partition(mesh->pointCount());
     vector<idx_t> cell_partition(mesh->cellCount());
     int result = METIS_PartMeshNodal(&el_count, &point_count, cellsizes.data(), celldata.data(), 0, 0, &nparts, 0, options, &objval, cell_partition.data(), point_partition.data());
@@ -40,4 +32,17 @@ std::vector<idx_t> partition(std::shared_ptr<Mesh> mesh, idx_t nparts)
     idx_t beg = 0;
     METIS_MeshToNodal(&el_count, &point_count, cellsizes.data(), celldata.data(), &beg, &adj, &adjncy);
     return point_partition;
+}
+
+void colorMesh(std::shared_ptr<Mesh> mesh, std::vector<idx_t> partition)
+{
+    auto colors = vtkSmartPointer<vtkLongLongArray>::New();
+    colors->SetNumberOfComponents(1);
+    colors->SetName("Colors");
+    for (auto i = 0; i < partition.size(); i++){
+        double value = partition[i];
+        colors->InsertNextTuple(&value);
+    }
+    auto polyData = mesh->data();
+    polyData->GetPointData()->SetScalars(colors);
 }

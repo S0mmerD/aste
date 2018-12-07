@@ -2,6 +2,11 @@
 
 Mesh::Mesh(vtkSmartPointer<vtkDataSet> data) : _data(data) {}
 
+vtkSmartPointer<vtkDataSet> Mesh::data()
+{
+    return _data;
+}
+
 Vertex Mesh::point(int i)
 {
     auto ptr = _data->GetPoint(i);

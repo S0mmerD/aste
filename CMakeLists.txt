@@ -37,9 +37,11 @@ include(${VTK_USE_FILE})
 
 find_package(METIS REQUIRED)
 
+add_subdirectory(mesh)
+
 add_executable(readMesh readMesh.cpp)
 add_executable(aste aste.cpp)
-add_executable(readVTK readVTK.cpp meshReader.cpp mesh.cpp metisUtils.cpp)
+add_executable(readVTK readVTK.cpp metisUtils.cpp)
 add_library(common common.cpp)
 
 target_link_libraries(readVTK ${Boost_LIBRARIES})
@@ -48,6 +50,7 @@ target_link_libraries(readVTK ${precice})
 target_link_libraries(readVTK ${VTK_LIBRARIES})
 target_link_libraries(readVTK ${METIS_LIBRARIES})
 target_link_libraries(readVTK common)
+target_link_libraries(readVTK mesh)
 
 target_link_libraries(aste ${Boost_LIBRARIES})
 target_link_libraries(aste ${MPI_LIBRARIES})
