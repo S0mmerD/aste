@@ -13,24 +13,11 @@ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 message(STATUS "Build configuration: " ${CMAKE_BUILD_TYPE})
 
-find_library(precice precice PATHS $ENV{PRECICE_ROOT}/build/last)
-if(NOT precice)
-  message(FATAL_ERROR "preCICE was not found")
-endif()
-include_directories($ENV{PRECICE_ROOT}/src)
-
+find_package(precice PATHS $ENV{PRECICE_ROOT}/build REQUIRED)
 
 find_package(Boost 1.60.0 REQUIRED COMPONENTS system program_options filesystem)
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
-
-find_package(MPI REQUIRED)
-include_directories(${MPI_INCLUDE_PATH})
-set(COMPILE_FLAGS  ${COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
-set(LINK_FLAGS ${LINK_FLAGS} ${MPI_LINK_FLAGS})
-
-find_package(Eigen3 3.2 REQUIRED)
-include_directories(${EIGEN3_INCLUDE_DIR})
 
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
@@ -44,9 +31,11 @@ add_executable(aste aste.cpp)
 add_executable(readVTK readVTK.cpp metisUtils.cpp)
 add_library(common common.cpp)
 
+target_link_libraries(common preCICE)
+
 target_link_libraries(readVTK ${Boost_LIBRARIES})
 target_link_libraries(readVTK ${MPI_LIBRARIES})
-target_link_libraries(readVTK ${precice})
+target_link_libraries(readVTK preCICE)
 target_link_libraries(readVTK ${VTK_LIBRARIES})
 target_link_libraries(readVTK ${METIS_LIBRARIES})
 target_link_libraries(readVTK common)
@@ -54,11 +43,11 @@ target_link_libraries(readVTK mesh)
 
 target_link_libraries(aste ${Boost_LIBRARIES})
 target_link_libraries(aste ${MPI_LIBRARIES})
-target_link_libraries(aste ${precice})
+target_link_libraries(aste preCICE)
 target_link_libraries(aste common)
 
 target_link_libraries(readMesh ${Boost_LIBRARIES})
 target_link_libraries(readMesh ${MPI_LIBRARIES})
-target_link_libraries(readMesh ${precice})
+target_link_libraries(readMesh preCICE)
 target_link_libraries(readMesh common)
 

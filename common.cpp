@@ -23,7 +23,8 @@ OptionMap getOptions(int argc, char *argv[])
     ("ny", po::value<int>()->default_value(10), "Number of elements in y-direction")
     ("deadrank", po::value<int>()->default_value(-1), "A rank that is not used")
     ("printMesh", po::bool_switch(), "Print the full mesh")
-    ("meshFile", po::value<string>()->required());
+    ("meshFile", po::value<string>()->required())
+    ("valueTag", po::value<string>()->default_value("Colors"), "VTK value tag for input mesh");
   
   po::variables_map vm;        
 

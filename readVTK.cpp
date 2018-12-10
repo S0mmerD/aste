@@ -11,6 +11,8 @@
 
 using namespace std;
 
+void writeToPrecice(const OptionMap& opts, std::vector<idx_t> partition, shared_ptr<MPIEnv> env);
+
 int main(int argc, char *argv[]) {
     auto globalMPI = make_shared<MPIEnv>(argc, argv);
     auto options = getOptions(argc, argv);
@@ -19,4 +21,6 @@ int main(int argc, char *argv[]) {
     auto part = partition(mesh, 4);
     colorMesh(mesh, part);
     MeshWriter("colored.vtk").writeMesh(mesh);
+    auto precice = makePreciceFromOptions(globalMPI, options, mesh);
 }
+
