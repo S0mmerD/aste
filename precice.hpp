@@ -79,6 +79,6 @@ Precice makePreciceFromOptions(std::shared_ptr<MPIEnv> env, OptionMap options, s
     auto part = options["participant"].as<string>() == "A" ? Participant::A : Participant::B;
     auto runName = options["runName"].as<std::string>();
     auto preciceConfig = options["precice-config"].as<string>();
-    auto tag = options["Value"].as<string>();
+    auto tag = options["valueTag"].as<string>();
     return Precice(part, env, runName, preciceConfig, mesh, tag);
 }
