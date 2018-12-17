@@ -27,29 +27,40 @@ class Precice
 {
     int _meshID;
     int _dataID;
+    int _count;
     std::vector<int> _vertexIDs;
     Participant _participant;
     std::shared_ptr<Mesh> _mesh;
     std::vector<double> _data;
+    std::vector<Vertex> _ownVertices;
     std::string _tag;
     std::unique_ptr<precice::SolverInterface> _interface;
     public:
     Precice(Participant participant, std::shared_ptr<MPIEnv> mpi, std::string runName, std::string config, std::shared_ptr<Mesh> mesh, std::string dataTag) : _participant{participant}, _mesh{mesh}, _tag{dataTag}
     {
-        if (participant == Participant::A)
-            _data = std::vector<double>(_mesh->allValues(_tag).begin(), mesh->allValues(_tag).end());
-        else
-            _data = std::vector<double>(_mesh->pointCount(), 0);
         _interface = make_unique<precice::SolverInterface>(toString(participant), mpi->rank(), mpi->size());
         _interface->configure(config);
         precice::utils::EventRegistry::instance().runName = runName;
         _meshID = _interface->getMeshID(participant == Participant::A? "MeshA" : "MeshB" );
         _dataID = _interface->getDataID("Data", _meshID);
+        std::cout << "preparing vertices\n";
         _vertexIDs.reserve(mesh->pointCount());
+        auto secondIt = mesh->allValues(_tag).begin();
+        auto rank = mpi->rank();
         for (const auto& vert : mesh->allPoints()){
-            _vertexIDs.push_back(_interface->setMeshVertex(_meshID, vert.data()));
+            if (*secondIt == rank){
+                _vertexIDs.push_back(_interface->setMeshVertex(_meshID, vert.data()));
+                _ownVertices.push_back(vert);
+            }
+            secondIt++;
         }
+        _count = _vertexIDs.size();
         _interface->initialize();
+        std::cout << "Initialized";
+        if (participant == Participant::A)
+            _data = std::vector<double>(_count, rank);
+        else
+            _data = std::vector<double>(_count, 0);
         if (_interface->isActionRequired(precice::constants::actionWriteInitialData())) {
             _interface->writeBlockScalarData(_dataID, _mesh->valueCount(_tag), _vertexIDs.data(), _data.data());
             _interface->fulfilledAction(precice::constants::actionWriteInitialData());
@@ -61,12 +72,12 @@ class Precice
     {
         while (_interface->isCouplingOngoing()) {
             if (_participant == Participant::A) {
-                _interface->writeBlockScalarData(_dataID, _mesh->valueCount(_tag), _vertexIDs.data(), _data.data());
+                _interface->writeBlockScalarData(_dataID, _count, _vertexIDs.data(), _data.data());
             }
 
             _interface->advance(1);
             if (_participant == Participant::B) {
-                _interface->readBlockScalarData(_dataID, _mesh->pointCount(), _vertexIDs.data(), _data.data()); 
+                _interface->readBlockScalarData(_dataID, _count, _vertexIDs.data(), _data.data()); 
             }
         }
         _interface->finalize();

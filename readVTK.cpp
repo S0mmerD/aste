@@ -18,9 +18,10 @@ int main(int argc, char *argv[]) {
     auto options = getOptions(argc, argv);
     auto meshReader = MeshReader(options["meshFile"].as<string>());
     auto mesh = meshReader.readMesh();
-    auto part = partition(mesh, 4);
+    auto part = partition(mesh, globalMPI->size());
     colorMesh(mesh, part);
     MeshWriter("colored.vtk").writeMesh(mesh);
     auto precice = makePreciceFromOptions(globalMPI, options, mesh);
+    precice.couple();
 }
 

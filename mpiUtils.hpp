@@ -38,6 +38,7 @@ class MPIEnv{
         int size() {return _comm->size();}
         ~MPIEnv()
         {
+            MPI_Barrier(MPI_COMM_WORLD);
             MPI_Finalize();
         }
 };
