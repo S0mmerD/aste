@@ -22,6 +22,10 @@ include(${VTK_USE_FILE})
 
 find_package(METIS REQUIRED)
 
+find_package(Eigen3 REQUIRED)
+
+find_package(MPI REQUIRED)
+
 add_subdirectory(mesh)
 
 add_executable(readMesh readMesh.cpp)
@@ -39,16 +43,25 @@ target_link_libraries(readVTK ${VTK_LIBRARIES})
 target_link_libraries(readVTK ${METIS_LIBRARIES})
 target_link_libraries(readVTK common)
 target_link_libraries(readVTK mesh)
+target_include_directories(readVTK PRIVATE ${EIGEN3_INCLUDE_DIR})
+target_link_libraries(readVTK ${MPI_LIBRARIES})
+target_include_directories(readVTK PUBLIC ${MPI_INCLUDE_PATH})
 
 target_link_libraries(aste ${Boost_LIBRARIES})
 target_include_directories(readVTK PRIVATE ${Boost_INCLUDE_DIRS})
 target_link_libraries(aste ${MPI_LIBRARIES})
 target_link_libraries(aste preCICE)
 target_link_libraries(aste common)
+target_include_directories(aste PRIVATE ${EIGEN3_INCLUDE_DIR})
+target_link_libraries(aste ${MPI_LIBRARIES})
+target_include_directories(aste PUBLIC ${MPI_INCLUDE_PATH})
 
 target_link_libraries(readMesh ${Boost_LIBRARIES})
 target_include_directories(readVTK PRIVATE ${Boost_INCLUDE_DIRS})
 target_link_libraries(readMesh ${MPI_LIBRARIES})
 target_link_libraries(readMesh preCICE)
 target_link_libraries(readMesh common)
+target_include_directories(readMesh PRIVATE ${EIGEN3_INCLUDE_DIR})
+target_link_libraries(readMesh ${MPI_LIBRARIES})
+target_include_directories(readMesh PUBLIC ${MPI_INCLUDE_PATH})
 
