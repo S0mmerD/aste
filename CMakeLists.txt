@@ -36,8 +36,11 @@ add_executable(readMesh readMesh.cpp)
 add_executable(aste aste.cpp)
 add_executable(readVTK readVTK.cpp metisUtils.cpp)
 add_library(common common.cpp)
+add_library(metisAPI SHARED metisAPI.cpp)
 
 target_link_libraries(common ${precice})
+
+target_link_libraries(metisAPI ${METIS_LIBRARIES})
 
 target_link_libraries(readVTK ${Boost_LIBRARIES})
 target_include_directories(readVTK PRIVATE ${Boost_INCLUDE_DIRS})
@@ -68,4 +71,7 @@ target_link_libraries(readMesh common)
 target_include_directories(readMesh PRIVATE ${EIGEN3_INCLUDE_DIR})
 target_link_libraries(readMesh ${MPI_LIBRARIES})
 target_include_directories(readMesh PUBLIC ${MPI_INCLUDE_PATH})
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/read_mesh.py
+         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 

@@ -27,10 +27,6 @@ std::vector<idx_t> partition(std::shared_ptr<Mesh> mesh, idx_t nparts)
     vector<idx_t> point_partition(mesh->pointCount());
     vector<idx_t> cell_partition(mesh->cellCount());
     int result = METIS_PartMeshNodal(&el_count, &point_count, cellsizes.data(), celldata.data(), 0, 0, &nparts, 0, options, &objval, cell_partition.data(), point_partition.data());
-    idx_t *adj;
-    idx_t *adjncy;
-    idx_t beg = 0;
-    METIS_MeshToNodal(&el_count, &point_count, cellsizes.data(), celldata.data(), &beg, &adj, &adjncy);
     return point_partition;
 }
 

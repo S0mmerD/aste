@@ -17,6 +17,7 @@ readMesh
 inMesh.txt
 outMesh.txt
 testMesh.txt
+.idea/
 *.events
 *.timings
 *.out
