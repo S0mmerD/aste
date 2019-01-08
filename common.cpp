@@ -24,6 +24,7 @@ OptionMap getOptions(int argc, char *argv[])
     ("deadrank", po::value<int>()->default_value(-1), "A rank that is not used")
     ("printMesh", po::bool_switch(), "Print the full mesh")
     ("meshFile", po::value<string>()->required())
+    ("output", po::value<string>()->default_value("output"))
     ("valueTag", po::value<string>()->default_value("Colors"), "VTK value tag for input mesh");
   
   po::variables_map vm;        
