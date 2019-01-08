@@ -75,4 +75,6 @@ target_include_directories(readMesh PUBLIC ${MPI_INCLUDE_PATH})
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/read_mesh.py
          DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/join_mesh.py
+         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 

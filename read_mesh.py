@@ -3,14 +3,21 @@ import os
 import numpy as np
 from ctypes import *
 from tqdm import tqdm
+import argparse
 
 
 def main():
-    mesh = read_mesh("colored.vtk")
-    numparts = 4
+    args = parse_args()
+    mesh = read_mesh(args.in_meshname)
+    numparts = args.numparts
     part = partition(mesh, numparts)
     meshes = generate_meshes(mesh, part, numparts, "Colors")
-    write_meshes(meshes, "colored")
+    if not args.out_meshname:
+        out_meshname = args.in_meshname[:-4]
+        print("No --out given. Setting output to: " + out_meshname)
+    else:
+        out_meshname = args.out_meshname
+    write_meshes(meshes, out_meshname)
 
 def read_mesh(filename):
     result = []
@@ -61,6 +68,12 @@ def write_meshes(meshes, dirname):
         with open(dirname + "/" + str(i), "w+") as file:
             for entry in mesh:
                 file.write(" ".join(map(str, entry)) + "\n")
+def parse_args():
+    parser = argparse.ArgumentParser(description="Read vtk meshes, partition them and write them out in internal format")
+    parser.add_argument("in_meshname", metavar="inputmesh", help="The vtk mesh used as input")
+    parser.add_argument("--out", "-o", dest="out_meshname", help="The output mesh directory name")
+    parser.add_argument("--numparts", "-n", dest="numparts", type=int, help="The number of parts to split into")
+    return parser.parse_args()
 
 if __name__ == "__main__":
     main()
