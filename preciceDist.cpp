@@ -39,11 +39,14 @@ int main(int argc, char* argv[])
     auto filename = meshname + "/" + std::to_string(MPIrank);
     std::ifstream infile(filename);
     double x, y, z, val;
-    while (infile >> x >> y >> z >> val) {
-        std::array<double, 3> vertexPos = {x, y, z};
+    std::string line;
+    while (std::getline(infile, line)){
+        std::istringstream iss(line);
+        iss >> x >> y >> z >> val;
+        std::array<double, 3> vertexPos{x, y, z};
         vertexIDs.push_back(interface.setMeshVertex(meshID, vertexPos.data()));
         positions.push_back(vertexPos);
-        if (participant == "A")
+        if (participant == "A") //val is ignored on B.
             data.push_back(val);
         i++;
     }
