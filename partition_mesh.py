@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import vtk
 import os
 import numpy as np

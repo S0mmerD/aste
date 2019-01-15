@@ -1,6 +1,0 @@
-intermediate Format, falls libvtk nicht da
-#include <Python.h>
-.vkt->read&partition->in_mesh/0,1,2,..->readMesh->preCICE
-.vtk->read&partition->out_mesh/0,1,2,...->writeMesh->back
-
-argparse read_mesh -n default 1
