@@ -27,19 +27,15 @@ class Mesh:
                     entry += (cell.GetPointId(j),)
                 self.cells.append(entry)
             self.points = [vtkmesh.GetPoint(i) for i in range(vtkmesh.GetNumberOfPoints())]
-            if tag: 
-                fieldData = vtkmesh.GetPointData().GetArray(tag)
-                if not fieldData:
-                    raise Exception("Invalid dataTag given")
+            fieldData = vtkmesh.GetPointData().GetScalars()
+            if fieldData:
                 for i in range(vtkmesh.GetNumberOfPoints()):
-                    print(fieldData.GetTuple(i))
                     self.pointdata.append(fieldData.GetTuple(i))
-
 
 def main():
     args = parse_args()
     print("Reading mesh...")
-    mesh = read_mesh(args.in_meshname, args.data_tag)
+    mesh = read_mesh(args.in_meshname)
     print("Done.")
     numparts = args.numparts if args.numparts else 1
     if numparts > 1:
@@ -58,7 +54,7 @@ def main():
     write_meshes(meshes, out_meshname)
     print("Done.")
 
-def read_mesh(filename, dataTag = None):
+def read_mesh(filename):
     """
     Reads a mesh from the given filename. For vtk meshes a tag for the data values can be given. 
     """
@@ -68,7 +64,7 @@ def read_mesh(filename, dataTag = None):
         reader.SetFileName(filename)
         reader.Update()
         output = reader.GetOutput()
-        return Mesh(output, dataTag)
+        return Mesh(output)
     elif filename[-4:] == ".txt":
         mesh = Mesh()
         with open(filename, "r") as fh:
@@ -81,6 +77,7 @@ def read_mesh(filename, dataTag = None):
                 if len(parts) > 3:
                     mesh.pointdata.append(tuple(parts[3:]))
         return mesh
+    raise Exception("Invalid file extension.")
 
 def partition(mesh, numparts):
     """

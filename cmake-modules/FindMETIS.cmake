@@ -93,6 +93,7 @@ if(METIS_INCLUDE_DIR AND METIS_LIBRARY)
   # Set flags for building test program
   set(CMAKE_REQUIRED_INCLUDES ${METIS_INCLUDE_DIR})
   set(CMAKE_REQUIRED_LIBRARIES ${METIS_LIBRARY})
+  list(APPEND CMAKE_REQUIRED_LIBRARIES m)
 
   # Build and run test program
   include(CheckCSourceRuns)
